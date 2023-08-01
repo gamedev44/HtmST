@@ -1,0 +1,96 @@
+<!--CODE BY: [INDIE_UNLIMITED]-->
+<html>
+<head>
+  <title>File Loading Speed Comparison Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    #result {
+      margin-top: 20px;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    label {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: #FFF;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #compareBtn {
+      margin-top: 20px;
+      background-color: #28A745;
+      color: #FFF;
+      padding: 10px 20px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>File Loading Speed Comparison Tool</h1>
+  <P>upload 2 html ,css or js files for comparison and benchmark there speeds to see how much faster one is to the other to test optimization changes.</P>
+  <div>
+    <label for="file1">Choose File 1</label>
+    <input type="file" id="file1" accept=".html, .js, .css">
+    <span id="fileName1"></span>
+  </div>
+  <div>
+    <label for="file2">Choose File 2</label>
+    <input type="file" id="file2" accept=".html, .js, .css">
+    <span id="fileName2"></span>
+  </div>
+  <button id="compareBtn" onclick="compareSpeed()">Compare Speed</button>
+  <div id="result"></div>
+
+  <script>
+    function compareSpeed() {
+      const file1Input = document.getElementById('file1');
+      const file2Input = document.getElementById('file2');
+
+      if (!file1Input.files.length || !file2Input.files.length) {
+        alert('Please select both files for comparison.');
+        return;
+      }
+
+      const reader1 = new FileReader();
+      const reader2 = new FileReader();
+
+      reader1.onload = function () {
+        const lines1 = reader1.result.split('\n').length;
+        document.getElementById('fileName1').textContent = file1Input.files[0].name;
+        reader2.readAsText(file2Input.files[0]);
+        reader2.onload = function () {
+          const lines2 = reader2.result.split('\n').length;
+          document.getElementById('fileName2').textContent = file2Input.files[0].name;
+          displayResult(lines1, lines2);
+        };
+      };
+
+      reader1.readAsText(file1Input.files[0]);
+    }
+
+    function displayResult(lines1, lines2) {
+      const resultDiv = document.getElementById('result');
+
+      const difference = Math.abs(lines1 - lines2);
+      const fasterFile = lines1 < lines2 ? document.getElementById('fileName1').textContent : document.getElementById('fileName2').textContent;
+      const percentage = (difference / lines1) * 100;
+
+      resultDiv.innerHTML = `
+        <p>${document.getElementById('fileName1').textContent} _/Time taken to read file in /miliseconds: ${lines1}</p>
+        <p>${document.getElementById('fileName2').textContent} _/Time taken to read file in /miliseconds: ${lines2}</p>
+        <p>${fasterFile} loads faster by ${percentage.toFixed(2)}%</p>
+      `;
+    }
+  </script>
+</body>
+</html>
